@@ -38,13 +38,15 @@
 
         /* Widget Container */
         .widget-container {
-            width: 100%;
-            max-width: 420px;
+            width: 95%; /* Fluid width for mobile */
+            max-width: 1000px; /* Max width for desktop */
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            overflow: hidden;
             border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            max-height: 85vh; /* Adapts height to screen size */
         }
 
         /* Header */
@@ -55,6 +57,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0; /* Prevents header from shrinking */
         }
 
         .widget-header h2 {
@@ -72,23 +75,30 @@
             font-weight: 600;
         }
 
-        /* Shift List */
+        /* Shift List - Responsive Grid */
         .shift-list {
             padding: 20px;
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            /* Creates columns automatically based on available width. 
+               Min 280px per card, otherwise it wraps */
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 16px;
-            max-height: 500px;
-            overflow-y: auto;
+            overflow-y: auto; /* Internal scrolling */
         }
 
         /* Scrollbar Styling */
         .shift-list::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
+        }
+        .shift-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
         }
         .shift-list::-webkit-scrollbar-thumb {
             background-color: #d1d5db;
             border-radius: 4px;
+        }
+        .shift-list::-webkit-scrollbar-thumb:hover {
+            background-color: #9ca3af;
         }
 
         /* Individual Shift Card */
@@ -99,11 +109,14 @@
             padding: 16px;
             transition: all 0.2s ease;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .shift-card:hover {
             border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 4px 12px rgba(255, 127, 0, 0.15); /* Orange shadow hint */
             transform: translateY(-2px);
         }
 
@@ -117,13 +130,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
 
         .shift-date {
             font-weight: 700;
             color: var(--text-main);
-            font-size: 1.05rem;
+            font-size: 1.1rem;
         }
 
         .shift-role {
@@ -131,10 +144,10 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             color: var(--primary);
-            background: #eff6ff;
+            background: #fff7ed; /* Light orange bg */
             padding: 4px 8px;
             border-radius: 4px;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         .shift-time {
@@ -142,14 +155,15 @@
             font-size: 0.95rem;
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-bottom: 12px;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-weight: 500;
         }
 
         /* Icons (SVG) */
         .icon {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             stroke: currentColor;
             stroke-width: 2;
             fill: none;
@@ -158,18 +172,20 @@
         /* Action Buttons */
         .btn-swap {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             background-color: var(--primary);
             color: white;
             font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: background 0.2s;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
+            margin-top: auto; /* Pushes button to bottom */
         }
 
         .btn-swap:hover {
@@ -205,6 +221,7 @@
             align-items: center;
             gap: 8px;
             z-index: 100;
+            white-space: nowrap;
         }
 
         .toast.show {
@@ -214,9 +231,26 @@
 
         /* Empty State */
         .empty-state {
+            grid-column: 1 / -1; /* Spans all columns */
             text-align: center;
             padding: 40px 20px;
             color: var(--text-sub);
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 600px) {
+            .widget-header h2 {
+                font-size: 1.1rem;
+            }
+            
+            body {
+                padding: 10px;
+            }
+            
+            .shift-list {
+                padding: 16px;
+                gap: 12px;
+            }
         }
     </style>
 </head>
@@ -283,6 +317,24 @@
                 role: "Springer",
                 location: "Terrasse",
                 status: "swapped" // Already swapped example
+            },
+            {
+                id: 5,
+                date: "Mo, 31. Okt",
+                startTime: "09:00",
+                endTime: "17:00",
+                role: "Kasse",
+                location: "Hauptbereich",
+                status: "active"
+            },
+             {
+                id: 6,
+                date: "Di, 01. Nov",
+                startTime: "12:00",
+                endTime: "20:00",
+                role: "Springer",
+                location: "Halle 1",
+                status: "active"
             }
         ];
 
@@ -346,7 +398,7 @@
                         <span class="shift-role">${shift.role}</span>
                     </div>
                     <div class="shift-time">
-                        <svg class="icon" style="width:14px; color:var(--text-sub)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <svg class="icon" style="width:18px; color:var(--text-sub)" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         ${shift.startTime} - ${shift.endTime} Uhr
                     </div>
                     ${buttonHtml}
@@ -367,7 +419,8 @@
             // Simulation of API call / Processing
             const btn = document.querySelectorAll('.btn-swap')[shiftIndex]; // Simple selection for demo
             if(btn) {
-                const originalText = btn.innerHTML;
+                // Keep dimensions to prevent jump
+                btn.style.width = btn.offsetWidth + 'px';
                 btn.innerHTML = 'Verarbeite...';
                 btn.classList.add('processing');
             }
