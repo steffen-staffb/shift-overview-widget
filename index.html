@@ -75,13 +75,11 @@
             font-weight: 600;
         }
 
-        /* Shift List - Responsive Grid */
+        /* Shift List - Flexbox Layout */
         .shift-list {
             padding: 20px;
-            display: grid;
-            /* Creates columns automatically based on available width. 
-               Min 280px per card, otherwise it wraps */
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            display: flex;
+            flex-wrap: wrap; /* Allows wrapping on larger screens */
             gap: 16px;
             overflow-y: auto; /* Internal scrolling */
         }
@@ -112,6 +110,12 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            
+            /* Flex properties for responsive layout */
+            /* Grow to fill space, shrink if needed, basis of 300px */
+            /* On iPhone 15 (width ~393px), this forces a single column vertical stack */
+            flex: 1 1 300px; 
+            max-width: 100%;
         }
 
         .shift-card:hover {
@@ -231,7 +235,7 @@
 
         /* Empty State */
         .empty-state {
-            grid-column: 1 / -1; /* Spans all columns */
+            width: 100%; /* Full width in flex container */
             text-align: center;
             padding: 40px 20px;
             color: var(--text-sub);
