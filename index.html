@@ -39,7 +39,8 @@
         /* Widget Container */
         .widget-container {
             width: 95%; /* Fluid width for mobile */
-            max-width: 1000px; /* Max width for desktop */
+            max-width: 600px; /* Limit width for single column view */
+            min-height: 650px; /* Minimum height requested */
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
@@ -79,9 +80,10 @@
         .shift-list {
             padding: 20px;
             display: flex;
-            flex-wrap: wrap; /* Allows wrapping on larger screens */
+            flex-wrap: wrap; /* Allows wrapping */
             gap: 16px;
             overflow-y: auto; /* Internal scrolling */
+            flex-grow: 1; /* Fills remaining height */
         }
 
         /* Scrollbar Styling */
@@ -111,10 +113,9 @@
             flex-direction: column;
             justify-content: space-between;
             
-            /* Flex properties for responsive layout */
-            /* Grow to fill space, shrink if needed, basis of 300px */
-            /* On iPhone 15 (width ~393px), this forces a single column vertical stack */
-            flex: 1 1 300px; 
+            /* Force single column layout */
+            flex: 1 1 100%; 
+            width: 100%;
             max-width: 100%;
         }
 
@@ -282,13 +283,27 @@
 
     <script>
         /**
+         * Helper function to generate dynamic dates
+         * Returns date string like "Mo., 24. Okt."
+         */
+        function getFutureDate(daysToAdd) {
+            const date = new Date();
+            date.setDate(date.getDate() + daysToAdd);
+            return date.toLocaleDateString('de-DE', { 
+                weekday: 'short', 
+                day: '2-digit', 
+                month: 'short' 
+            });
+        }
+
+        /**
          * Shift Data Simulation
-         * In a real app, this would come from an API endpoint.
+         * Generated dynamically based on current date
          */
         const initialShifts = [
             {
                 id: 1,
-                date: "Mo, 24. Okt",
+                date: getFutureDate(1), // Starts tomorrow
                 startTime: "09:00",
                 endTime: "17:00",
                 role: "Kasse",
@@ -297,7 +312,7 @@
             },
             {
                 id: 2,
-                date: "Mi, 26. Okt",
+                date: getFutureDate(3), // +3 days
                 startTime: "14:00",
                 endTime: "22:00",
                 role: "Kasse",
@@ -306,7 +321,7 @@
             },
             {
                 id: 3,
-                date: "Fr, 28. Okt",
+                date: getFutureDate(5), // +5 days
                 startTime: "08:00",
                 endTime: "16:00",
                 role: "Lager",
@@ -315,7 +330,7 @@
             },
             {
                 id: 4,
-                date: "Sa, 29. Okt",
+                date: getFutureDate(6), // +6 days
                 startTime: "10:00",
                 endTime: "18:00",
                 role: "Springer",
@@ -324,7 +339,7 @@
             },
             {
                 id: 5,
-                date: "Mo, 31. Okt",
+                date: getFutureDate(8), // +8 days
                 startTime: "09:00",
                 endTime: "17:00",
                 role: "Kasse",
@@ -333,7 +348,7 @@
             },
              {
                 id: 6,
-                date: "Di, 01. Nov",
+                date: getFutureDate(9), // +9 days
                 startTime: "12:00",
                 endTime: "20:00",
                 role: "Springer",
